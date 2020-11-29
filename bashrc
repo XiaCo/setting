@@ -10,7 +10,7 @@ alias gbandroid='CGO_ENABLED=0 && GOOS=linux && GOARCH=arm && go build'
 #}
 
 # git 设置代理
-alias gitproxy='git config --global http.proxy "http://127.0.0.1:1087" && git config --global https.pr
+alias gitproxy='git config --global http.proxy "http://127.0.0.1:1087" && git config --global https.proxy "http://127.0.0.1:1087"'
 # git 取消代理
 alias ungitproxy='git config --global --unset http.proxy && git config --global --unset https.proxy'
 
