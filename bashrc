@@ -1,8 +1,14 @@
-alias ll='ls -lht'
+CLICOLOR=1
 
-alias gbwin='CGO_ENABLED=0 && GOOS=windows && GOARCH=amd64 && go build'
-alias gblinux='CGO_ENABLED=0 && GOOS=linux && GOARCH=amd64 && go build'
-alias gbandroid='CGO_ENABLED=0 && GOOS=linux && GOARCH=arm && go build'
+alias ll='ls -lht'
+alias tac='/usr/local/bin/tac'
+alias topmem='ps aux | sort -k4,4nr'
+
+alias gb86win='export CGO_ENABLED=0 && export GOOS=windows && export GOARCH=amd64 && go b
+alias gb86linux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go b
+alias gb86darwin='export CGO_ENABLED=0 && export GOOS=darwin && export GOARCH=amd64 && go
+alias gbarmlinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=arm && go bu
+alias gbmip64lelinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=mips64le
 # 独立打包，不依赖动态链接库，需要安装glibc-static
 # mac 下报错
 #function gbstatic() {
@@ -10,9 +16,9 @@ alias gbandroid='CGO_ENABLED=0 && GOOS=linux && GOARCH=arm && go build'
 #}
 
 # git 设置代理
-alias gitproxy='git config --global http.proxy "http://127.0.0.1:1087" && git config --global https.proxy "http://127.0.0.1:1087"'
+alias gitproxy='git config --global http.proxy "http://127.0.0.1:1087" && git config --gl
 # git 取消代理
-alias ungitproxy='git config --global --unset http.proxy && git config --global --unset https.proxy'
+alias gitproxycancel='git config --global --unset http.proxy && git config --global --uns
 
 # docker debug
 function dockerdebug() {
