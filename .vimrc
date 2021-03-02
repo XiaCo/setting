@@ -6,10 +6,12 @@ call plug#begin('~/.vim/plugged')
 " golang plugin
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " 结构体折叠
-Plug 'AndrewRadev/splitjoin.vim'
+"Plug 'AndrewRadev/splitjoin.vim'
 
 " 自动补全括号的插件，包括小括号，中括号，以及花括号
 "Plug 'jiangmiao/auto-pairs'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'scrooloose/nerdtree'  " 树形目录
 " 可以在导航目录中看到 git 版本信息
@@ -24,7 +26,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " 更强大的 tab 补全，使YCM与ultisnips tab兼容
-Plug 'vim-scripts/SuperTab'
+"Plug 'vim-scripts/SuperTab'
 
 " markdown
 Plug 'plasticboy/vim-markdown'
@@ -38,7 +40,6 @@ Plug 'vim-airline/vim-airline'
 "Plug 'vim-airline/vim-airline-themes'
 "Plug 'yggdroot/indentline'  " python 对其线
 Plug 'easymotion/vim-easymotion'  " 跳转
-Plug 'Valloric/YouCompleteMe'
 "set completeopt=longest,menuone  " 关闭函数详情
 
 " 有道词典在线翻译
@@ -78,6 +79,10 @@ let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_generate_tags = 1
+                       
+" YCM
+"set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif "离开插入模式后自动关闭预览窗口
 
 " make YCM compatible with UltiSnips (using supertab)
 "let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -95,7 +100,7 @@ let g:UltiSnipsSnippetDirectories=[$HOME.'.vim/mysnippets']
 let g:rooter_patterns = ['.git', 'main.go']
 
 " 自动打开markdown视窗
-let g:mkdp_auto_start= 1
+" let g:mkdp_auto_start= 1
 " 禁用markdown折叠
 autocmd BufNewFile,BufRead *.md set nofoldenable
 
@@ -157,7 +162,7 @@ nmap ss <Plug>(easymotion-s2)
 " vim-go debug
 nnoremap <leader>r :GoRun<CR>
 nnoremap <leader>d :GoDebugStart<CR>
-nnoremap <leader>c :GoDebugContinue<CR>
+nnoremap <leader>t :GoDebugContinue<CR>
 nnoremap <leader>n :GoDebugNext<CR>
 nnoremap <leader>i :GoDebugStep<CR>
 nnoremap <leader>o :GoDebugStepOut<CR>
@@ -166,15 +171,24 @@ nnoremap <leader>q :GoDebugStop<CR>
 nnoremap <leader>im :GoImplements<CR>
 nnoremap <leader>re :GoReferrers<CR>
 
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+
 nmap tree :NERDTreeToggle<CR>
 nnoremap <leader>ts :NERDTreeClose<CR>
 " 显示行号
 let NERDTreeShowLineNumbers=1
 
 " :command
-" 以下两个命令效果一致，演示说明了不通模式下<CR>失效(需要用|代替)以及转义问题
+" 以下两个命令效果一致，功能为去除双引号转义并json格式化，演示说明了不通模式下<CR>失效(需要用|代替)以及转义问题
 com! JsonFormat :s/\\\|^"\|"$//g | :%!jsonf -c=false -s=false
 "nmap jsont :s/\\\\|^"\\|"$//g<CR>:%!python -m json.tool<CR>
+
+" \n\t进行换行
+com! Printn :%s/\\n\\t/\r/g
 
 com! Json :%!jsonf -c=false -s=false
 "此命令注释掉原因是：在normal模式下移动变卡顿
@@ -184,3 +198,10 @@ com! Json :%!jsonf -c=false -s=false
 " 自动运行
 " 关闭文件自动关闭nerdtree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" 字体
+set guifont=Monaco:h14
+" macvim启动目录
+":cd ~/Desktop/gowork
+
+

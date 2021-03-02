@@ -4,11 +4,11 @@ alias ll='ls -lht'
 alias tac='/usr/local/bin/tac'
 alias topmem='ps aux | sort -k4,4nr'
 
-alias gb86win='export CGO_ENABLED=0 && export GOOS=windows && export GOARCH=amd64 && go b
-alias gb86linux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go b
-alias gb86darwin='export CGO_ENABLED=0 && export GOOS=darwin && export GOARCH=amd64 && go
-alias gbarmlinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=arm && go bu
-alias gbmip64lelinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=mips64le
+alias gb86win='export CGO_ENABLED=0 && export GOOS=windows && export GOARCH=amd64 && go build'
+alias gb86linux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=amd64 && go build'
+alias gb86darwin='export CGO_ENABLED=0 && export GOOS=darwin && export GOARCH=amd64 && go build'
+alias gbarmlinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=arm && go build'
+alias gbmip64lelinux='export CGO_ENABLED=0 && export GOOS=linux && export GOARCH=mips64le && go build'
 # 独立打包，不依赖动态链接库，需要安装glibc-static
 # mac 下报错
 #function gbstatic() {
