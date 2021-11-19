@@ -13,6 +13,10 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+" fzf
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
+
 Plug 'scrooloose/nerdtree'  " 树形目录
 " 可以在导航目录中看到 git 版本信息
 Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -35,6 +39,8 @@ Plug 'iamcco/markdown-preview.vim'
 " json
 Plug 'axiaoxin/vim-json-line-format'
 
+" git
+Plug 'tpope/vim-fugitive'
 " Vim状态栏插件，包括显示行号，列号，文件类型，文件名，以及Git状态
 Plug 'vim-airline/vim-airline'
 "Plug 'vim-airline/vim-airline-themes'
@@ -58,14 +64,21 @@ Plug 'rakr/vim-one'
 
 call plug#end()
 
-" 开启24bit的颜色，开启这个颜色会更漂亮一些
-set termguicolors
-" 配色方案, 可以从上面插件安装中的选择一个使用
-colorscheme one " 主题
-set background=dark " 主题背景 dark-深色; light-浅色
 
+" vim-go变量
 " 保存自动运行:goimports
 let g:go_fmt_command = "goimports"
+" 自动发现gopath
+let g:go_autodetect_gopath = 1
+" 下边框栏显示结构体信息
+let g:go_auto_type_info=1
+" golang debug 框位置设置
+let g:go_debug_windows = {
+          \ 'vars':       'rightbelow 30vnew',
+          \ 'stack':      'leftabove 20new',
+          \ 'goroutines': 'botright 10new',
+          \ 'out':        'botright 5new',
+\ }
 
 let g:go_version_warning = 1
 let g:go_highlight_methods = 1
@@ -79,15 +92,6 @@ let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_generate_tags = 1
-                       
-" YCM
-"set completeopt=longest,menu "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
-"autocmd InsertLeave * if pumvisible() == 0|pclose|endif "离开插入模式后自动关闭预览窗口
-
-" make YCM compatible with UltiSnips (using supertab)
-"let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-"let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-"let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " better key bindings for UltiSnipsExpandTrigger
 let g:UltiSnipsExpandTrigger="<c-e>"
@@ -96,17 +100,21 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " 自定义代码块文件位置
 let g:UltiSnipsSnippetDirectories=[$HOME.'.vim/mysnippets']
 
-" root位置匹配
-let g:rooter_patterns = ['.git', 'main.go']
+" nerdtree root位置匹配
+let g:rooter_patterns = ['.git', 'main.go', 'go.mod']
 
 " 自动打开markdown视窗
 " let g:mkdp_auto_start= 1
-" 禁用markdown折叠
-autocmd BufNewFile,BufRead *.md set nofoldenable
 
+" 开启24bit的颜色，开启这个颜色会更漂亮一些
+set termguicolors
+" 配色方案, 可以从上面插件安装中的选择一个使用
+colorscheme one " 主题
+set background=dark " 主题背景 dark-深色; light-浅色
 
 syntax on    "语法高亮
-set nu
+set nu " 显示行号
+set relativenumber " 相对行号
 set ic  "匹配忽略大小写
 set cursorline "突出显示当前行
 set nowrap    "不自动折行
@@ -117,14 +125,19 @@ set scrolloff=3        "距离顶部和底部3行"
 set encoding=utf-8  "编码
 set fenc=utf-8      "编码
 set hlsearch        "搜索高亮
-set tabstop=4   "tab宽度
-set expandtab       "tab替换为空格键
-set autoindent      "自动缩进
+set shiftwidth=4
+set softtabstop=4
+set ts=4
+set expandtab
+set smarttab
+set smartindent
+set autoindent
+set cindent
 
 
 " n(普通),v(可视),i(插入),c(命令行)
 
-let mapleader=" "
+let mapleader=","
 
 noremap <C-a> ggVG
 inoremap <C-.> .<C-x><C-o>
@@ -137,7 +150,7 @@ nmap <Leader>c "+yy
 " n 模式下粘贴系统剪切板的内容
 nmap <Leader>v "+p
 
-" 命令行模式下
+" 命令行模式上下左右
 cnoremap <C-l> <Right>
 cnoremap <C-h> <Left>
 cnoremap <C-j> <Down>
@@ -159,6 +172,12 @@ noremap <C-w> <C-w>c
 " 页面搜索
 nmap ss <Plug>(easymotion-s2)
 
+" 文件名搜索
+nnoremap <C-p> :Files <CR>
+
+" 全文搜索
+nnoremap <leader>f :Ag <CR>
+
 " vim-go debug
 nnoremap <leader>r :GoRun<CR>
 nnoremap <leader>d :GoDebugStart<CR>
@@ -178,7 +197,6 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 " inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
 
 nmap tree :NERDTreeToggle<CR>
-nnoremap <leader>ts :NERDTreeClose<CR>
 " 显示行号
 let NERDTreeShowLineNumbers=1
 
@@ -187,21 +205,26 @@ let NERDTreeShowLineNumbers=1
 com! JsonFormat :s/\\\|^"\|"$//g | :%!jsonf -c=false -s=false
 "nmap jsont :s/\\\\|^"\\|"$//g<CR>:%!python -m json.tool<CR>
 
-" \n\t进行换行
-com! Printn :%s/\\n\\t/\r/g
+" \n\t \n 进行格式化
+com! Printn :silent %s/\\n/\r/g | :silent %s/\\t/    /g
 
 com! Json :%!jsonf -c=false -s=false
 "此命令注释掉原因是：在normal模式下移动变卡顿
 "nmap json :%!python -m json.tool
 
+com! Printb :%!xxd -g 1
 
 " 自动运行
+autocmd VimEnter * NERDTree
 " 关闭文件自动关闭nerdtree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" 禁用markdown折叠
+autocmd BufNewFile,BufRead *.md set nofoldenable
 
 " 字体
 set guifont=Monaco:h14
-" macvim启动目录
-":cd ~/Desktop/gowork
 
+" vim宏
+" copy from yapi to golang struct field
+let @s="^yiwA `json:\"\<Esc>pa\"`"
 
